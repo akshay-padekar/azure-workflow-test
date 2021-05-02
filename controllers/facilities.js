@@ -183,6 +183,8 @@ const search = async (req, res) => {
         return res.send(facilities.map(facility => {
             return {
                 id: facility._id,
+                name: facility.NAME,
+                address: facility.ADDRESS,
                 label: facility.NAME + ' - ' + facility.ADDRESS
             }
         }));

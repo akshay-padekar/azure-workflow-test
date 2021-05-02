@@ -144,20 +144,29 @@ const getFacilitiesData = async (req, res) => {
     }
 
     try {
-        let appSettingLastRefreshed = await APP_SETTINGS.find({
-            KEY: "LAST_REFRESHED"
-        });
-        let lastRefreshed = null;
-        if (appSettingLastRefreshed.length > 0 && appSettingLastRefreshed[0].VALUE) {
-            lastRefreshed = new Date(appSettingLastRefreshed[0].VALUE);
+        const FACILITIES_LATEST_DATE = await FACILITIES_DATA.aggregate([
+            {
+                $match: {
+                    FACILITY: mongoose.Types.ObjectId(req.params.id)
+                }
+            },
+            {
+                $group: {
+                    _id: "FACILITY",
+                    latestDate: {$max: "$DATE"}
+                }
+            }
+        ]);
+        if (!FACILITIES_LATEST_DATE || FACILITIES_LATEST_DATE.length === 0) {
+            return res.status(500).send({
+                message: 'Error occurred.'
+            });
         }
-        const FACILITIES_DATA_REC = await FACILITIES_DATA.find({
-                                                            FACILITY: mongoose.Types.ObjectId(req.params.id)
-                                                         })
+        const FACILITIES_DATA_REC = await FACILITIES_DATA.find({FACILITY: mongoose.Types.ObjectId(req.params.id)}, {DATE: FACILITIES_LATEST_DATE[0].latestDate})
                                                          .populate({path: "FACILITY", populate: {path: "LOCATION", populate: { path: "WARD" }}})
                                                          .populate({path: "FACILITY", populate: {path: "CATEGORY" }})
                                                          .populate("VACCINES");
-        if (!FACILITIES_DATA_REC) {
+        if (!FACILITIES_DATA_REC || FACILITIES_DATA_REC.length === 0) {
             return res.status(404).send({
                 message: 'Record not found.'
             });
@@ -172,15 +181,16 @@ const getFacilitiesData = async (req, res) => {
             return {
                 facilitiesData: {
                     facility: data.FACILITY.NAME,
-                    location: data.FACILITY.LOCATION.NAME,
+                    address: data.FACILITY.ADDRESS,
                     ward: data.FACILITY.LOCATION.WARD.NAME,
                     category: data.FACILITY.CATEGORY.NAME,
                     vaccines: vaccines,
+                    contact: data.FACILITY.CONTACT,
                     date: data.DATE ? new Date(data.DATE) : null,
                     isFunctional: data.IS_FUNCTIONAL,
                     remarks: data.REMARKS
                 },
-                lastRefreshed
+                showingDataFor: moment(FACILITIES_LATEST_DATE[0].latestDate).format("DD/MM/YYYY")
             }
         })[0];
         return res.send(facilitiesData);

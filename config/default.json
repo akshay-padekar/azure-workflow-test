@@ -1,5 +1,4 @@
 {
-    "port": "8000",
     "mongodb_url" : "mongodb+srv://dbadmin:db@dm!n$2021@cluster0.zqk7q.mongodb.net/mahavaccination-db?retryWrites=true&w=majority",
     "api_key": "32330aed2725f08a23f04fd36ca41ab405a304c78a0a70d0"
 }
