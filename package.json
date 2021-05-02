@@ -1,0 +1,24 @@
+{
+  "name": "alert-dashboard-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "config": "^3.3.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "mongo-seeding": "^3.5.0",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.11.10",
+    "mongoose-fuzzy-searching": "^2.0.2"
+  },
+  "devDependencies": {}
+}
