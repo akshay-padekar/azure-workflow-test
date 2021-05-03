@@ -9,6 +9,6 @@ app.use(bodyParser.json());
 
 require('./routes/index')(app);
 
-app.listen(() => {
+app.listen(8000, () => {
   console.log(`Server is running`);
 });
